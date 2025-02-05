@@ -1,0 +1,19 @@
+  1     1 ms    <1 ms    <1 ms  router.asus.com [192.168.1.1]
+  2     3 ms     6 ms     4 ms  172.31.32.98
+  3     *        *        *     Request timed out.
+  4     3 ms     5 ms     5 ms  karlskrona-a192-gw.bahnhof.net [85.24.152.1]
+  5     4 ms     5 ms     5 ms  kna-bfv-dr1.kna-kr-dr1.bahnhof.net [46.59.113.18]
+  6    88 ms   139 ms    18 ms  kna-kr-dr1.vxo-vj-dr1.bahnhof.net [46.59.113.10]
+  7     9 ms     9 ms     9 ms  vxo-vj-dr1.mmo-cr3.bahnhof.net [46.59.113.38]
+  8    17 ms    17 ms    17 ms  mmo-cr3.sto-cr4.bahnhof.net [46.59.112.132]
+  9    17 ms    20 ms    16 ms  sto-cr4.sto1-p1.as8473.net [46.59.112.84]
+ 10    18 ms    16 ms    18 ms  sto1-p1.sto4-p1.as8473.net [46.59.112.187]
+ 11     *      238 ms   225 ms  sto4-er1.se.as8473.net [85.24.220.17]
+ 12    17 ms    14 ms    14 ms  netnod-ix-ge-b-sth-1500.as32787.akamai.com [194.68.128.70]
+ 13    14 ms    14 ms    14 ms  po110.bs-b.sech-sto.netarch.akamai.com [23.57.100.245]
+ 14    18 ms    16 ms    17 ms  a72-52-1-145.deploy.static.akamaitechnologies.com [72.52.1.145]
+ 15    18 ms    17 ms    17 ms  ae121.access-a.sech-sto.netarch.akamai.com [23.57.100.251]
+ 16    16 ms    18 ms    16 ms  93.191.172.237
+ 17    32 ms    33 ms    33 ms  a2-19-6-28.deploy.static.akamaitechnologies.com [2.19.6.28]
+ 18     *        *        *     Request timed out.
+ 19    34 ms    33 ms    33 ms  198.185.159.144

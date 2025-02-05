@@ -1,0 +1,23 @@
+  1     1 ms    <1 ms    <1 ms  router.asus.com [192.168.1.1]
+  2     6 ms     4 ms     2 ms  172.31.32.98
+  3     *        *        *     Request timed out.
+  4     4 ms     5 ms     5 ms  karlskrona-a192-gw.bahnhof.net [85.24.152.1]
+  5     4 ms     2 ms     3 ms  kna-bfv-dr1.kna-kr-dr1.bahnhof.net [46.59.113.18]
+  6     6 ms     5 ms    10 ms  kna-kr-dr1.vxo-vj-dr1.bahnhof.net [46.59.113.10]
+  7     9 ms     9 ms     9 ms  vxo-vj-dr1.mmo-cr3.bahnhof.net [46.59.113.38]
+  8     9 ms    10 ms     9 ms  mmo-cr3.mmo-cr1.bahnhof.net [46.59.113.205]
+  9     9 ms     8 ms     9 ms  kbn-b4-link.ip.twelve99.net [213.248.89.6]
+ 10    10 ms    12 ms     9 ms  kbn-bb5-link.ip.twelve99.net [62.115.134.80]
+ 11    23 ms    22 ms    21 ms  ffm-bb1-link.ip.twelve99.net [62.115.143.32]
+ 12    38 ms    37 ms    36 ms  mei-b5-link.ip.twelve99.net [62.115.124.59]
+ 13   174 ms   173 ms   173 ms  sng-b7-link.ip.twelve99.net [62.115.113.3]
+ 14   268 ms   264 ms   266 ms  tky-b4-link.ip.twelve99.net [62.115.136.143]
+ 15   251 ms   250 ms   249 ms  tky-b2-link.ip.twelve99.net [62.115.139.20]
+ 16   302 ms   297 ms   278 ms  arterianetworks-ic-367114.ip.twelve99-cust.net [62.115.169.45]
+ 17   255 ms   248 ms   248 ms  163.139.130.222
+ 18   250 ms   249 ms   249 ms  222.230.187.98
+ 19     *        *        *     Request timed out.
+ 20     *        *        *     Request timed out.
+ 21     *        *        *     Request timed out.
+ 22     *        *        *     Request timed out.
+ 23   249 ms   249 ms   259 ms  v118-27-58-99.244s.static.cnode.io [118.27.58.99]
