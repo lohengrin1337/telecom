@@ -41,7 +41,7 @@ class CustomWebBrowser:
         accept="text/html",
         conn="close"
     ):
-        """ Build an HTTP header """
+        """ Build a simple HTTP header """
         header = f"{method} {path}{query} {protocol}\r\n"
         header += f"Host: {host}\r\n"
         header += f"User-Agent: {self._name}\r\n"
@@ -52,7 +52,7 @@ class CustomWebBrowser:
         return header
 
     def request_page(self, host, path, query):
-        """ Request a web resource """
+        """ Request a web page """
         self._connect(host)
         self._send(self._build_header(host, path, query))
         self._receive_and_print()

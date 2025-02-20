@@ -1,0 +1,2 @@
+curl ifconfig.me
+81.170.143.142
