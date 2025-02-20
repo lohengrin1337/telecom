@@ -56,12 +56,11 @@ class UDPSender:
         self._close()
 
     def _close(self):
-        """ Close socket """
         self._socket.close()
 
 
 if __name__ == "__main__":
-    rec_name = "localhost"
+    rec_name = "127.0.0.1"
     rec_port = 12000
     freq = 1
     timeout = 3
