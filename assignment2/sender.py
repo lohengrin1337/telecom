@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from abc import ABC, abstractmethod
-from socket import *
 import time
 
 class Sender(ABC):
@@ -68,7 +67,7 @@ class Sender(ABC):
             start = time.perf_counter()
 
             payload = self._generate_payload()
-            self._send(payload.encode())
+            self._send(payload)
             self._packet_counter += 1
 
             end = time.perf_counter()

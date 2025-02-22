@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 
-import socket
+from abc import ABC, abstractmethod
 import time
 import re
+from socket import timeout as socket_timeout
 
-class UDPReceiver:
-    """ UDP stream receiver 
+class Receiver:
+    """ Abstract stream receiver.
         Capable of receiving text messages
-        as UDP packet stream, and verifying sequence numbers """
+        as packet stream, and verifying sequence numbers.
+        Subclasses implement _create_socket(), _listen() """
 
     def __init__(self):
-        """ Create UDP socket """
-        # self._socket = socket(AF_INET, SOCK_DGRAM)
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        """ Create socket, set defaults """
+        self._socket = self._create_socket()
+        self._connection_socket = None
         self._port = 12000
         self._timeout = 60
         self._next_sequence_num = 10001
         self._valid_packets = 0
         self._invalid_packets = 0
+
+    @abstractmethod
+    def _create_socket(self):
+        """ Create a socket of some type """
+        pass
 
     def set_port(self, port):
         self._port = port
@@ -28,29 +35,42 @@ class UDPReceiver:
         return self
 
     def listen(self):
-        """ Bind socket to port, and listen for incoming stream until timeout"""
+        """ Prepare socket, and listen for incoming stream until timeout"""
         if not self._port:
             raise Exception("No port is currently set!")
 
-        self._socket.bind(("", self._port))
+        # Prepare socket to receive
+        self._prepare()
+
         print(f"Listening on port {self._port} in {self._timeout}s")
 
-        self._socket.settimeout(5)  # timeout for each recvfrom call
         timeout = time.time() + self._timeout   # timeout for while loop
         while time.time() < timeout:
             try:
-                payload, _ = self._socket.recvfrom(2048)
-                self._receive(payload.decode())
-            except socket.timeout:
+                payload = self._receive()
+                self._process(payload)
+            except socket_timeout:
                 pass
 
         print(f"Timeout after {self._timeout}s\nValid packets: {self._valid_packets}\nInvalid packets: {self._invalid_packets}")
         self._close()
 
-    def _receive(self, payload):
+    @abstractmethod
+    def _prepare(self):
+        """ Prepare socket.
+            Must be implemented by subclass. """
+        pass
+
+    @abstractmethod
+    def _receive(self):
+        """ Receive packet from socket.
+            Must be implemented by subclass """
+        pass
+
+    def _process(self, payload):
         """ Check all three parts of payload, and log results """
         # match sequence number, message and message terminator
-        match = re.match(r"(\d{5});([A-Za-z]+)(#{4})", payload)
+        match = re.match(r"(\d+);([A-Za-z]+)(#{4})", payload)
 
         if not match:
             # Format of payload is invalid
@@ -91,13 +111,7 @@ class UDPReceiver:
         with open("all_seq.log", "a") as file:
             file.write(message + "\n")
 
+    @abstractmethod
     def _close(self):
-        self._socket.close()
-
-
-if __name__ == "__main__":
-    timeout = 5
-
-    udp_receiver = UDPReceiver()
-    udp_receiver.set_timeout(timeout)
-    udp_receiver.listen()
+        """ Close sockets """
+        pass

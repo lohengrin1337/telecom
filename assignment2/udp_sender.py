@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from sender import Sender
-import socket
+from socket import socket, AF_INET, SOCK_DGRAM
 
 class UDPSender(Sender):
     """ UDP stream sender.
@@ -11,7 +11,7 @@ class UDPSender(Sender):
 
     def _create_socket(self):
         """ Create UDP socket """
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        return socket(AF_INET, SOCK_DGRAM)
 
     def _connect(self):
         """ Implemented with tcp socket only """
@@ -19,13 +19,13 @@ class UDPSender(Sender):
 
     def _send(self, payload):
         """ Send payload into UDP socket """
-        self._socket.sendto(payload, (self._receiver_name, self._receiver_port))
+        self._socket.sendto(payload.encode(), (self._receiver_name, self._receiver_port))
 
 if __name__ == "__main__":
     rec_name = "127.0.0.1"
     rec_port = 12000
     freq = 15
-    timeout = 30
+    timeout = 5
 
     udp_sender = UDPSender()
     udp_sender.set_receiver(rec_name, rec_port).set_stream_frequency(freq).set_timeout(timeout)
