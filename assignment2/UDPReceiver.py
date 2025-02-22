@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from socket import *
+import socket
 import time
 import re
 
@@ -11,10 +11,13 @@ class UDPReceiver:
 
     def __init__(self):
         """ Create UDP socket """
-        self._socket = socket(AF_INET, SOCK_DGRAM)
+        # self._socket = socket(AF_INET, SOCK_DGRAM)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._port = 12000
         self._timeout = 60
         self._next_sequence_num = 10001
+        self._valid_packets = 0
+        self._invalid_packets = 0
 
     def set_port(self, port):
         self._port = port
@@ -30,13 +33,18 @@ class UDPReceiver:
             raise Exception("No port is currently set!")
 
         self._socket.bind(("", self._port))
+        print(f"Listening on port {self._port} in {self._timeout}s")
 
-        timeout = time.time() + self._timeout
+        self._socket.settimeout(5)  # timeout for each recvfrom call
+        timeout = time.time() + self._timeout   # timeout for while loop
         while time.time() < timeout:
-            payload, _ = self._socket.recvfrom(2048)
-            self._receive(payload.decode())
+            try:
+                payload, _ = self._socket.recvfrom(2048)
+                self._receive(payload.decode())
+            except socket.timeout:
+                pass
 
-        print("timeout")
+        print(f"Timeout after {self._timeout}s\nValid packets: {self._valid_packets}\nInvalid packets: {self._invalid_packets}")
         self._close()
 
     def _receive(self, payload):
@@ -47,40 +55,48 @@ class UDPReceiver:
         if not match:
             # Format of payload is invalid
             print(f"ERROR: Payload corrupted! (expected seq: {self._next_sequence_num})")
-            self._log(payload, corrupt=True)
+            self._log(f"{payload} ({self._next_sequence_num})", corrupt=True)
             self._next_sequence_num += 1
+            self._invalid_packets += 1
             return
 
         seq_num = match.group(1)
         if not int(seq_num) == self._next_sequence_num:
             # Sequence number is out of order
             print(f"ERROR: Wrong sequence number: {seq_num}, expected: {self._next_sequence_num}")
-
             self._log(f"{seq_num} ({self._next_sequence_num})", invalid_seq=True)
             self._next_sequence_num += 1
+            self._invalid_packets += 1
             return
 
         # Payload arrived as expected
         self._log(seq_num)
+        self._next_sequence_num += 1
+        self._valid_packets += 1
         return
 
     def _log(self, message, corrupt=False, invalid_seq=False):
-        """ Log sequence number, corrupted payload, or invalid seq """
-        filename = "success.log"
+        """ Log sequence number, corrupted payload, and invalid seq num """
         if corrupt:
-            filename = "corrupt.log"
-        if invalid_seq:
-            filename = "invalid_seq.log"
+            with open("corrupt.log", "a") as file:
+                file.write(message + "\n")
+            if len(message) >= 5:
+                message = message[:5]
 
-        with open(filename, "a") as file:
-            file.write(message)
+        if invalid_seq:
+            with open("invalid_seq.log", "a") as file:
+                file.write(message + "\n")
+            message = message[:5]
+
+        with open("all_seq.log", "a") as file:
+            file.write(message + "\n")
 
     def _close(self):
         self._socket.close()
 
 
 if __name__ == "__main__":
-    timeout = 5
+    timeout = 35
 
     udp_receiver = UDPReceiver()
     udp_receiver.set_timeout(timeout)
