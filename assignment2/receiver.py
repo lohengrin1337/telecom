@@ -8,12 +8,13 @@ from socket import timeout as socket_timeout
 class Receiver:
     """ Abstract stream receiver.
         Capable of receiving text messages
-        as packet stream, and verifying sequence numbers.
-        Subclasses implement _create_socket(), _listen() """
+        as packet stream, and processing payloads.
+        Subclasses must implement _create_socket(), _prepare(),
+        _receive() and _close() differently depending on socket type """
 
     def __init__(self):
         """ Create socket, set defaults """
-        self._socket = self._create_socket()
+        self._socket = None
         self._connection_socket = None
         self._port = 12000
         self._timeout = 60
@@ -21,9 +22,11 @@ class Receiver:
         self._valid_packets = 0
         self._invalid_packets = 0
 
+        self._create_socket()
+
     @abstractmethod
     def _create_socket(self):
-        """ Create a socket of some type """
+        """ Assign a socket of some type to _socket """
         pass
 
     def set_port(self, port):
@@ -35,25 +38,34 @@ class Receiver:
         return self
 
     def listen(self):
-        """ Prepare socket, and listen for incoming stream until timeout"""
+        """ Prepare socket, and listen for incoming stream until timeout """
         if not self._port:
             raise Exception("No port is currently set!")
 
+        print(f"Listening on port {self._port} in {self._timeout}s")
+
         # Prepare socket to receive
         self._prepare()
-
-        print(f"Listening on port {self._port} in {self._timeout}s")
 
         timeout = time.time() + self._timeout   # timeout for while loop
         while time.time() < timeout:
             try:
                 payload = self._receive()
-                self._process(payload)
-            except socket_timeout:
-                pass
 
-        print(f"Timeout after {self._timeout}s\nValid packets: {self._valid_packets}\nInvalid packets: {self._invalid_packets}")
+                # print(payload[:10].ljust(10, "-"))
+
+                self._process(payload)
+            except ValueError:
+                print("Sender closed connection")
+                break
+            except ConnectionError as e:
+                print(f"ERROR: Connection was broken! ({e})")
+                break
+            except socket_timeout:
+                continue
+
         self._close()
+        self._print_status()
 
     @abstractmethod
     def _prepare(self):
@@ -113,5 +125,9 @@ class Receiver:
 
     @abstractmethod
     def _close(self):
-        """ Close sockets """
+        """ Close sockets in socket spesific way """
         pass
+
+    def _print_status(self):
+        print(f"Valid packets: {self._valid_packets}")
+        print(f"Invalid packets: {self._invalid_packets}")

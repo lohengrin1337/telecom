@@ -6,11 +6,11 @@ from socket import socket, AF_INET, SOCK_DGRAM
 class UDPReceiver(Receiver):
     """ UDP stream receiver.
         Capable of receiving text messages
-        as UDP packet stream, and verifying sequence numbers. """
+        as UDP packet stream, and processing payload. """
 
     def _create_socket(self):
         """ Create UDP socket """
-        return socket(AF_INET, SOCK_DGRAM)
+        self._socket = socket(AF_INET, SOCK_DGRAM)
 
     def _prepare(self):
         """ Bind UDP socket to port """
@@ -24,6 +24,8 @@ class UDPReceiver(Receiver):
 
     def _close(self):
         self._socket.close()
+        print("Socket closed")
+
 
 if __name__ == "__main__":
     timeout = 10

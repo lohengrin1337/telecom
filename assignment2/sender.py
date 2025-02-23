@@ -8,12 +8,12 @@ class Sender(ABC):
         Capable of sending text messages
         as packet stream of variable
         frequency.
-        Subclasses implements _create_socket(), _connect() and _send()
+        Subclasses must implement _create_socket(), _connect() and _send()
         differently depending on socket type. """
 
     def __init__(self):
-        """ Create socket, and set default properties """
-        self._socket = self._create_socket()
+        """ Create socket, set defaults """
+        self._socket = None
         self._receiver_name = None
         self._receiver_port = None
         self._stream_frequency = 1
@@ -23,9 +23,11 @@ class Sender(ABC):
         self._message = "A" * 1465  # nonsense text mesage, 1465 'A' = 1465 bytes
         self._msg_terminator = "####"
 
+        self._create_socket()
+
     @abstractmethod
     def _create_socket():
-        """ Must be implemented by subclass """
+        """ Assign a socket of some type to _socket """
         pass
 
     def set_receiver(self, name, port):
@@ -59,7 +61,7 @@ class Sender(ABC):
         # Establish connection (tcp only)
         self._connect()
 
-        print(f"Streaming with {self._stream_frequency}Hz for {self._timeout}s")
+        print(f"Streaming at {self._stream_frequency}Hz for {self._timeout}s")
 
         send_interval = 1 / self._stream_frequency
         timeout = time.perf_counter() + self._timeout
@@ -76,8 +78,8 @@ class Sender(ABC):
             # wait approx 1 send interval
             time.sleep(max(0, send_interval - elapsed - 0.000126))
 
-        print(f"Timeout after {self._timeout}s\n{self._packet_counter} packets sent")
         self._close()
+        self._print_status()
 
     @abstractmethod
     def _connect():
@@ -97,3 +99,8 @@ class Sender(ABC):
 
     def _close(self):
         self._socket.close()
+        print("Socket closed")
+
+    def _print_status(self):
+        print(f"{self._packet_counter} packets sent")
+

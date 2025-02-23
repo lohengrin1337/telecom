@@ -12,11 +12,10 @@ class TCPSender(Sender):
 
     def _create_socket(self):
         """ Create TCP socket """
-        return socket(AF_INET, SOCK_STREAM)
+        self._socket = socket(AF_INET, SOCK_STREAM)
 
     def _connect(self):
         self._socket.connect((self._receiver_name, self._receiver_port))
-        time.sleep(2)
 
     def _send(self, payload):
         """ Send payload into TCP socket """
@@ -25,8 +24,8 @@ class TCPSender(Sender):
 if __name__ == "__main__":
     rec_name = "127.0.0.1"
     rec_port = 12000
-    freq = 15
-    timeout = 5
+    freq = 2
+    timeout = 4
 
     tcp_sender = TCPSender()
     tcp_sender.set_receiver(rec_name, rec_port).set_stream_frequency(freq).set_timeout(timeout)

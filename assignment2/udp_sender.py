@@ -11,7 +11,7 @@ class UDPSender(Sender):
 
     def _create_socket(self):
         """ Create UDP socket """
-        return socket(AF_INET, SOCK_DGRAM)
+        self._socket = socket(AF_INET, SOCK_DGRAM)
 
     def _connect(self):
         """ Implemented with tcp socket only """
