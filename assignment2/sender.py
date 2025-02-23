@@ -39,47 +39,51 @@ class Sender(ABC):
         self._stream_frequency = freq
         return self
 
-    def set_timeout(self, timeout):
-        self._timeout = timeout     # seconds
-        return self
+    # def set_timeout(self, timeout):
+    #     self._timeout = timeout     # seconds
+    #     return self
 
-    # def _generate_payload(self):
-    #     """ Generate corrupt payload """
-    #     self._sequence_num += 1     # increment seq num
+    def _generate_payload(self):
+        """ Generate corrupt payload """
+        self._sequence_num += 1     # increment seq num
 
-    #     if self._sequence_num % 5 == 0:
-    #         # self._sequence_num += 1
-    #         return str(self._sequence_num) + ";" + self._message
+        if self._sequence_num % 5 == 0:
+            # self._sequence_num += 1
+            return str(self._sequence_num) + ";" + self._message
 
-    #     return str(self._sequence_num) + ";" + self._message + self._msg_terminator
+        return str(self._sequence_num) + ";" + self._message + self._msg_terminator
 
     def stream(self):
         """ Send UPD segments at a given frequency """
         if not self._receiver_name or not self._receiver_port:
             raise Exception("Set receiver (name and port) before streaming!")
 
-        # Establish connection (tcp only)
-        self._connect()
+        try:
+            # Establish connection (tcp only)
+            self._connect()
 
-        print(f"Streaming at {self._stream_frequency}Hz for {self._timeout}s")
+            print(f"Streaming at {self._stream_frequency}Hz for {self._timeout}s")
 
-        send_interval = 1 / self._stream_frequency
-        timeout = time.perf_counter() + self._timeout
-        while time.perf_counter() < timeout:
-            start = time.perf_counter()
+            send_interval = 1 / self._stream_frequency
+            timeout = time.perf_counter() + self._timeout
+            while time.perf_counter() < timeout:
+                start = time.perf_counter()
 
-            payload = self._generate_payload()
-            self._send(payload)
-            self._packet_counter += 1
+                payload = self._generate_payload()
+                self._send(payload)
+                self._packet_counter += 1
 
-            end = time.perf_counter()
-            elapsed = end - start
+                end = time.perf_counter()
+                elapsed = end - start
 
-            # wait approx 1 send interval
-            time.sleep(max(0, send_interval - elapsed - 0.000126))
+                # wait approx 1 send interval
+                time.sleep(max(0, send_interval - elapsed - 0.000126))
 
-        self._close()
-        self._print_status()
+        except ConnectionError as e:
+            print(f"CONNECTION ERROR: {e}")
+        finally:
+            self._close()
+            self._print_status()
 
     @abstractmethod
     def _connect():

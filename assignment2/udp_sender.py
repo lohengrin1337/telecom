@@ -24,7 +24,7 @@ class UDPSender(Sender):
 if __name__ == "__main__":
     rec_name = "127.0.0.1"
     rec_port = 12000
-    freq = 15
+    freq = 10
     timeout = 5
 
     udp_sender = UDPSender()

@@ -25,7 +25,7 @@ if __name__ == "__main__":
     rec_name = "127.0.0.1"
     rec_port = 12000
     freq = 2
-    timeout = 4
+    timeout = 10
 
     tcp_sender = TCPSender()
     tcp_sender.set_receiver(rec_name, rec_port).set_stream_frequency(freq).set_timeout(timeout)

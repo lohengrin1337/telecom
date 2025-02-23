@@ -15,7 +15,6 @@ class UDPReceiver(Receiver):
     def _prepare(self):
         """ Bind UDP socket to port """
         self._socket.bind(("", self._port))
-        self._socket.settimeout(5)  # timeout for each recvfrom call
 
     def _receive(self):
         """ Receive packet from socket """

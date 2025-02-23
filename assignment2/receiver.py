@@ -42,30 +42,31 @@ class Receiver:
         if not self._port:
             raise Exception("No port is currently set!")
 
-        print(f"Listening on port {self._port} in {self._timeout}s")
+        print(f"Listening on port {self._port}. Timeout: {self._timeout}s")
 
-        # Prepare socket to receive
-        self._prepare()
+        try:
+            # Prepare socket to receive
+            self._prepare()
 
-        timeout = time.time() + self._timeout   # timeout for while loop
-        while time.time() < timeout:
-            try:
-                payload = self._receive()
+            timeout = time.time() + self._timeout   # timeout for while loop
+            self._socket.settimeout(1)  # refresh while loop at least every sec
+            while time.time() < timeout:
+                try:
+                    payload = self._receive()
+                    self._process(payload)
+                except socket_timeout:
+                    continue
 
-                # print(payload[:10].ljust(10, "-"))
-
-                self._process(payload)
-            except ValueError:
-                print("Sender closed connection")
-                break
-            except ConnectionError as e:
-                print(f"ERROR: Connection was broken! ({e})")
-                break
-            except socket_timeout:
-                continue
-
-        self._close()
-        self._print_status()
+        except ValueError:  # empty payload
+            print("Sender closed connection")
+        except ConnectionError as e:
+            print(f"CONNECTION ERROR: {e}")
+        except socket_timeout:
+            # TCP socket timeout before established connection
+            pass
+        finally:
+            self._close()
+            self._print_status()
 
     @abstractmethod
     def _prepare(self):

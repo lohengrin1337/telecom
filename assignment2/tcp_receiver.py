@@ -16,7 +16,7 @@ class TCPReceiver(Receiver):
         """ Bind TCP socket to port, listen,
             create connection socket for incomming request """
         self._socket.bind(("", self._port))
-        self._socket.settimeout(5)  # 5s timeout for silent pipe
+        self._socket.settimeout(self._timeout)
         self._socket.listen(1)      # max 1 connection
         self._connection_socket, _ = self._socket.accept()
 
@@ -29,13 +29,14 @@ class TCPReceiver(Receiver):
 
 
     def _close(self):
-        self._connection_socket.close()
+        if self._connection_socket:
+            self._connection_socket.close()
         self._socket.close()
         print("Sockets closed")
 
 
 if __name__ == "__main__":
-    timeout = 5
+    timeout = 15
 
     tcp_receiver = TCPReceiver()
     tcp_receiver.set_timeout(timeout)
