@@ -39,19 +39,9 @@ class Sender(ABC):
         self._stream_frequency = freq
         return self
 
-    # def set_timeout(self, timeout):
-    #     self._timeout = timeout     # seconds
-    #     return self
-
-    def _generate_payload(self):
-        """ Generate corrupt payload """
-        self._sequence_num += 1     # increment seq num
-
-        if self._sequence_num % 5 == 0:
-            # self._sequence_num += 1
-            return str(self._sequence_num) + ";" + self._message
-
-        return str(self._sequence_num) + ";" + self._message + self._msg_terminator
+    def set_timeout(self, timeout):
+        self._timeout = timeout     # seconds
+        return self
 
     def stream(self):
         """ Send UPD segments at a given frequency """
@@ -95,6 +85,16 @@ class Sender(ABC):
             '10001;AAAAAAA....####' """
         self._sequence_num += 1
         return str(self._sequence_num) + ";" + self._message + self._msg_terminator
+
+    # def _generate_payload(self):
+    #     """ Generate corrupt payload """
+    #     self._sequence_num += 1     # increment seq num
+
+    #     if self._sequence_num % 5 == 0:
+    #         # self._sequence_num += 1
+    #         return str(self._sequence_num) + ";" + self._message
+
+    #     return str(self._sequence_num) + ";" + self._message + self._msg_terminator
 
     @abstractmethod
     def _send():

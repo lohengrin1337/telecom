@@ -2,7 +2,6 @@
 
 from sender import Sender
 from socket import socket, AF_INET, SOCK_STREAM
-import time
 
 class TCPSender(Sender):
     """ TCP stream sender.
