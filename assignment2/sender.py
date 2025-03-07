@@ -20,7 +20,8 @@ class Sender(ABC):
         self._timeout = 60
         self._packet_counter = 0
         self._sequence_num = 10000
-        self._message = "A" * 1465  # nonsense text mesage, 1465 'A' = 1465 bytes
+        # self._message = "A" * 1465  # nonsense text mesage, 1465 'A' = 1465 bytes
+        self._message = "A" * 1450  # nonsense text mesage, 1450 'A' = 1450 bytes
         self._msg_terminator = "####"
 
         self._create_socket()
@@ -67,7 +68,8 @@ class Sender(ABC):
                 elapsed = end - start
 
                 # wait approx 1 send interval
-                time.sleep(max(0, send_interval - elapsed - 0.000126))
+                time.sleep(max(0, send_interval - elapsed - 0.00057))
+                # time.sleep(0)
 
         except ConnectionError as e:
             print(f"CONNECTION ERROR: {e}")
@@ -81,20 +83,10 @@ class Sender(ABC):
         pass
 
     def _generate_payload(self):
-        """ Generate a 1475 byte payload with a seq num, a nonsense message and a terminator
+        """ Generate a payload with a seq num, a nonsense message and a terminator
             '10001;AAAAAAA....####' """
         self._sequence_num += 1
         return str(self._sequence_num) + ";" + self._message + self._msg_terminator
-
-    # def _generate_payload(self):
-    #     """ Generate corrupt payload """
-    #     self._sequence_num += 1     # increment seq num
-
-    #     if self._sequence_num % 5 == 0:
-    #         # self._sequence_num += 1
-    #         return str(self._sequence_num) + ";" + self._message
-
-    #     return str(self._sequence_num) + ";" + self._message + self._msg_terminator
 
     @abstractmethod
     def _send():
@@ -107,4 +99,3 @@ class Sender(ABC):
 
     def _print_status(self):
         print(f"{self._packet_counter} packets sent")
-

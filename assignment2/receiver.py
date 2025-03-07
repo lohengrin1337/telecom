@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 import time
-import re
 from socket import timeout as socket_timeout
 
 class Receiver:
@@ -81,54 +80,38 @@ class Receiver:
         pass
 
     def _process(self, payload):
-        """ Check all three parts of payload, and log results """
-        # match sequence number, message and message terminator
-        match = re.match(r"(\d+);([A-Za-z]+)(#{4})", payload)
-
-        if not match:
-            # Format of payload is invalid
-            print(f"ERROR: Payload corrupted! (expected seq: {self._next_sequence_num})")
-            self._log(f"{payload} ({self._next_sequence_num})", corrupt=True)
-            self._next_sequence_num += 1
-            self._invalid_packets += 1
-            return
-
-        seq_num = match.group(1)
-        if not int(seq_num) == self._next_sequence_num:
-            # Sequence number is out of order
-            print(f"ERROR: Wrong sequence number: {seq_num}, expected: {self._next_sequence_num}")
-            self._log(f"{seq_num} ({self._next_sequence_num})", invalid_seq=True)
-            self._next_sequence_num += 1
-            self._invalid_packets += 1
-            return
-
-        # Payload arrived as expected
+        """ Check sequence number and log results """
+        seq_num = payload[:5]
         self._log(seq_num)
-        self._next_sequence_num += 1
-        self._valid_packets += 1
-        return
 
-    def _log(self, message, corrupt=False, invalid_seq=False):
-        """ Log sequence number, corrupted payload, and invalid seq num """
-        if corrupt:
-            with open("corrupt.log", "a") as file:
-                file.write(message + "\n")
-            if len(message) >= 5:
-                message = message[:5]
+        if seq_num == str(self._next_sequence_num):
+            self._valid_packets += 1
+            self._next_sequence_num += 1
+        else:
+            print(f"Out of order: {seq_num}, expected {self._next_sequence_num}")
+            self._invalid_packets += 1
+            try:
+                seq_num = int(seq_num)
+                if seq_num > self._next_sequence_num:
+                    # Act as if one or more previous packets are lost
+                    self._next_sequence_num = seq_num + 1
+                # else:
+                    # Act as if current packet arrived late
+                    # next seq = current seq
+            except ValueError:
+                # Payload starts with NaN
+                self._next_sequence_num += 1
 
-        if invalid_seq:
-            with open("invalid_seq.log", "a") as file:
-                file.write(message + "\n")
-            message = message[:5]
-
-        with open("all_seq.log", "a") as file:
-            file.write(message + "\n")
+    def _log(self, sequence):
+        """ Log sequence to file"""
+        with open("sequence.log", "a") as file:
+            file.write(sequence + "\n")
 
     @abstractmethod
     def _close(self):
-        """ Close sockets in socket spesific way """
+        """ Close sockets in socket specific way """
         pass
 
     def _print_status(self):
-        print(f"Valid packets: {self._valid_packets}")
-        print(f"Invalid packets: {self._invalid_packets}")
+        print("Packets received:", self._valid_packets + self._invalid_packets)
+        print("Out of order:", self._invalid_packets)

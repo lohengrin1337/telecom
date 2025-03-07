@@ -22,9 +22,10 @@ class UDPSender(Sender):
         self._socket.sendto(payload.encode(), (self._receiver_name, self._receiver_port))
 
 if __name__ == "__main__":
+    # rec_name = "192.168.1.223"
     rec_name = "127.0.0.1"
     rec_port = 12000
-    freq = 10
+    freq = 50
     timeout = 5
 
     udp_sender = UDPSender()

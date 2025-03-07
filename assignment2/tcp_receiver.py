@@ -24,7 +24,7 @@ class TCPReceiver(Receiver):
         """ Accept request, and receive packet from socket """
         payload = self._connection_socket.recv(2048)
         if not payload:
-            raise ValueError("Empty payload")
+            raise ValueError("Empty payload")   # sender closed connection
         return payload.decode()
 
 
@@ -36,7 +36,7 @@ class TCPReceiver(Receiver):
 
 
 if __name__ == "__main__":
-    timeout = 15
+    timeout = 10
 
     tcp_receiver = TCPReceiver()
     tcp_receiver.set_timeout(timeout)
