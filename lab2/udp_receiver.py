@@ -27,7 +27,7 @@ class UDPReceiver(Receiver):
 
 
 if __name__ == "__main__":
-    timeout = 10
+    timeout = 35
 
     udp_receiver = UDPReceiver()
     udp_receiver.set_timeout(timeout)

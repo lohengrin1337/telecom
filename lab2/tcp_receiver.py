@@ -36,7 +36,7 @@ class TCPReceiver(Receiver):
 
 
 if __name__ == "__main__":
-    timeout = 10
+    timeout = 35
 
     tcp_receiver = TCPReceiver()
     tcp_receiver.set_timeout(timeout)
